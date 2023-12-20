@@ -25,14 +25,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     web.ignoring().requestMatchers(PathRequest.toStaticResources().atCommonLocations());
   }
 
-  @Override
-  protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    String password = passwordEncoder().encode("1111");
-    auth.inMemoryAuthentication().withUser("user").password(password).roles("USER");
-    auth.inMemoryAuthentication().withUser("manager").password(password).roles("MANAGER", "USER");
-    auth.inMemoryAuthentication().withUser("admin").password(password).roles("ADMIN", "MANAGER", "USER");
-  }
-
   @Bean
   protected PasswordEncoder passwordEncoder() {
     return PasswordEncoderFactories.createDelegatingPasswordEncoder();
