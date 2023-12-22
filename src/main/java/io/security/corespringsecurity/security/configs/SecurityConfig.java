@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @RequiredArgsConstructor
 @Configuration
@@ -23,6 +24,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
   private final CustomUserDetails customUserDetails;
   private final AuthenticationDetailsSource authenticationDetailsSource;
+  private final AuthenticationSuccessHandler authenticationSuccessHandler;
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -64,7 +66,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .loginPage("/login")
         .loginProcessingUrl("/loginProc")
         .authenticationDetailsSource(authenticationDetailsSource)
+
+        // 내부에서 successHandler를 설정하는 코드가 있기 때문에
+        // customSuccessHandler를 정의했다면 defaultSuccessUrl 이후에 successHandler를 설정해야 한다
         .defaultSuccessUrl("/")
+        .successHandler(authenticationSuccessHandler)
         .permitAll();
   }
 }
