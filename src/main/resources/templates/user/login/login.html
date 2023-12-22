@@ -10,6 +10,9 @@
       <div class="panel">
         <p>아이디와 비밀번호를 입력해주세요</p>
       </div>
+      <div th:if="${error}" class="form-group">
+        <span th:text="${errorMessage}" class="alert alert-danger">인증에 실패했습니다</span>
+      </div>
       <form th:action="@{/loginProc}" class="form-signin" method="post">
         <input type="hidden" th:value="secret" name="secret-key">
         <div class="form-group">
