@@ -1,5 +1,6 @@
 package io.security.corespringsecurity.security.configs;
 
+import io.security.corespringsecurity.security.handler.CustomAccessDeniedHandler;
 import io.security.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import io.security.corespringsecurity.security.service.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
@@ -75,5 +77,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         .successHandler(authenticationSuccessHandler)
         .failureHandler(authenticationFailureHandler)
         .permitAll();
+
+    http
+        .exceptionHandling()
+        .accessDeniedHandler(accessDeniedHandler());
+  }
+
+  @Bean
+  public AccessDeniedHandler accessDeniedHandler() {
+    CustomAccessDeniedHandler customAccessDeniedHandler = new CustomAccessDeniedHandler();
+    customAccessDeniedHandler.setErrorPage("/denied");
+
+    return customAccessDeniedHandler;
   }
 }
