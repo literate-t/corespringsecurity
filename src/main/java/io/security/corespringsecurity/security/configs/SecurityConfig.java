@@ -21,7 +21,6 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-//@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @Order(1)
@@ -30,14 +29,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final CustomUserDetails customUserDetails;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationDetailsSource authenticationDetailsSource;
-
-//  @Qualifier("customAuthSuccessHandler")
   private final AuthenticationSuccessHandler authenticationSuccessHandler;
-
-//  @Qualifier("customAuthFailureHandler")
   private final AuthenticationFailureHandler authenticationFailureHandler;
 
-  public SecurityConfig(
+    public SecurityConfig(
           CustomUserDetails customUserDetails,
           PasswordEncoder passwordEncoder,
           AuthenticationDetailsSource authenticationDetailsSource,

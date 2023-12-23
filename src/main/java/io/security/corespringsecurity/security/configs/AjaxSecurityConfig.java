@@ -3,6 +3,7 @@ package io.security.corespringsecurity.security.configs;
 import io.security.corespringsecurity.security.filter.AjaxLoginProcessingFilter;
 import io.security.corespringsecurity.security.provider.AjaxAuthenticationProvider;
 import io.security.corespringsecurity.security.service.CustomUserDetails;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,19 +19,14 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-//@RequiredArgsConstructor
 @Configuration
-//@EnableWebSecurity
+// @EnableWebSecurity // ?
 @Order(0)
 public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
   private final CustomUserDetails customUserDetails;
-
-//  @Qualifier("ajaxAuthSuccessHandler")
   private final AuthenticationSuccessHandler ajaxAuthSuccessHandler;
-
-//  @Qualifier("ajaxAuthFailureHandler")
   private final AuthenticationFailureHandler ajaxAuthFailureHandler;
 
   public AjaxSecurityConfig(CustomUserDetails customUserDetails,
