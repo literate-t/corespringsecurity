@@ -3,7 +3,7 @@ package io.security.corespringsecurity.security.configs;
 import io.security.corespringsecurity.security.handler.CustomAccessDeniedHandler;
 import io.security.corespringsecurity.security.provider.CustomAuthenticationProvider;
 import io.security.corespringsecurity.security.service.CustomUserDetails;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +16,12 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Configuration
 @EnableWebSecurity
 @Order(1)
@@ -31,8 +30,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
   private final CustomUserDetails customUserDetails;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationDetailsSource authenticationDetailsSource;
+
+//  @Qualifier("customAuthSuccessHandler")
   private final AuthenticationSuccessHandler authenticationSuccessHandler;
+
+//  @Qualifier("customAuthFailureHandler")
   private final AuthenticationFailureHandler authenticationFailureHandler;
+
+  public SecurityConfig(
+          CustomUserDetails customUserDetails,
+          PasswordEncoder passwordEncoder,
+          AuthenticationDetailsSource authenticationDetailsSource,
+          @Qualifier("customAuthSuccessHandler") AuthenticationSuccessHandler successHandler,
+          @Qualifier("customAuthFailureHandler") AuthenticationFailureHandler failureHandler) {
+    this.customUserDetails = customUserDetails;
+    this.passwordEncoder = passwordEncoder;
+    this.authenticationDetailsSource = authenticationDetailsSource;
+    this.authenticationSuccessHandler = successHandler;
+    this.authenticationFailureHandler = failureHandler;
+  }
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {

@@ -3,7 +3,7 @@ package io.security.corespringsecurity.security.configs;
 import io.security.corespringsecurity.security.filter.AjaxLoginProcessingFilter;
 import io.security.corespringsecurity.security.provider.AjaxAuthenticationProvider;
 import io.security.corespringsecurity.security.service.CustomUserDetails;
-import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -14,15 +14,32 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Configuration
 //@EnableWebSecurity
 @Order(0)
 public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
 
+
   private final CustomUserDetails customUserDetails;
+
+//  @Qualifier("ajaxAuthSuccessHandler")
+  private final AuthenticationSuccessHandler ajaxAuthSuccessHandler;
+
+//  @Qualifier("ajaxAuthFailureHandler")
+  private final AuthenticationFailureHandler ajaxAuthFailureHandler;
+
+  public AjaxSecurityConfig(CustomUserDetails customUserDetails,
+                            @Qualifier("ajaxAuthSuccessHandler") AuthenticationSuccessHandler successHandler,
+                            @Qualifier("ajaxAuthFailureHandler") AuthenticationFailureHandler failureHandler ) {
+    this.customUserDetails = customUserDetails;
+    this.ajaxAuthSuccessHandler = successHandler;
+    this.ajaxAuthFailureHandler = failureHandler;
+  }
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -54,8 +71,20 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
   public AbstractAuthenticationProcessingFilter processingFilter() throws Exception {
     AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(
         "/api/login");
+
     filter.setAuthenticationManager(authenticationManagerBean());
+    filter.setAuthenticationSuccessHandler(ajaxAuthSuccessHandler);
+    filter.setAuthenticationFailureHandler(ajaxAuthFailureHandler);
 
     return filter;
   }
+//  @Bean
+//  public AuthenticationSuccessHandler ajaxAuthenticationSuccessHandler() {
+//    return new AjaxAuthenticationSuccessHandler();
+//  }
+//
+//  @Bean
+//  public AuthenticationFailureHandler ajaxAuthenticationFailureHandler() {
+//    return new AjaxAuthenticationFailureHandler();
+//  }
 }

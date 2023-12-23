@@ -37,6 +37,7 @@ public class AjaxLoginProcessingFilter extends AbstractAuthenticationProcessingF
     AjaxAuthenticationToken token = new AjaxAuthenticationToken(
         accountDto.getUsername(), accountDto.getPassword());
 
+    // AuthenticationManager에게 전달하면, AuthenticationProvider에게 전달
     return getAuthenticationManager().authenticate(token);
   }
 
