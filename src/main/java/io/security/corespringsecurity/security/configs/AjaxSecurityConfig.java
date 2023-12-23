@@ -26,14 +26,12 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
 
   @Override
   protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-    AuthenticationProvider provider = ajaxAuthenticationProvider();
-    auth.authenticationProvider(provider);
+    auth.authenticationProvider(ajaxAuthenticationProvider());
   }
 
   @Bean
   public AuthenticationProvider ajaxAuthenticationProvider() {
-    AuthenticationProvider provider = new AjaxAuthenticationProvider(customUserDetails, passwordEncoder());
-    return provider;
+    return new AjaxAuthenticationProvider(customUserDetails, passwordEncoder());
   }
 
   @Bean
