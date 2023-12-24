@@ -63,39 +63,38 @@ public class AjaxSecurityConfig extends WebSecurityConfigurerAdapter {
         .antMatcher("/api/**")
         .authorizeRequests()
         .antMatchers("/api/messages").hasRole("MANAGER")
-        .anyRequest().authenticated()
-      .and()
-        .addFilterBefore(processingFilter(), UsernamePasswordAuthenticationFilter.class);
+        .anyRequest().authenticated();
+        // CustomDSL을 설정하면서 필요 없어짐
+        // http.addFilterBefore(processingFilter(), UsernamePasswordAuthenticationFilter.class);
     http
         .exceptionHandling()
             .authenticationEntryPoint(new AjaxLoginAuthenticationEntryPoint())
             .accessDeniedHandler(ajaxAccessDeniedHandler);
     http.csrf().disable();
+
+    customConfigurerAjax(http);
   }
 
-//  @Bean
-//  public AccessDeniedHandler accessDeniedHandler() {
-//    return new AjaxAccessDeniedHandler();
-//  }
-
-  @Bean
-  public AbstractAuthenticationProcessingFilter processingFilter() throws Exception {
-    AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(
-        "/api/login");
-
-    filter.setAuthenticationManager(authenticationManagerBean());
-    filter.setAuthenticationSuccessHandler(ajaxAuthSuccessHandler);
-    filter.setAuthenticationFailureHandler(ajaxAuthFailureHandler);
-
-    return filter;
+  private void customConfigurerAjax(HttpSecurity http) throws Exception {
+    http
+        .apply(new AjaxLoginConfigurer<>())
+        .ajaxSuccessHandler(ajaxAuthSuccessHandler)
+        .ajaxFailureHandler(ajaxAuthFailureHandler)
+        .setAuthenticationManager(authenticationManagerBean())
+        .loginProcessingUrl("/api/login");
+//        .createLoginProcessingUrlMatcher("/api/login");
   }
+
+// CustomDSL 설정하면서 필요 없어짐
 //  @Bean
-//  public AuthenticationSuccessHandler ajaxAuthenticationSuccessHandler() {
-//    return new AjaxAuthenticationSuccessHandler();
-//  }
+//  public AbstractAuthenticationProcessingFilter processingFilter() throws Exception {
+//    AjaxLoginProcessingFilter filter = new AjaxLoginProcessingFilter(
+//        "/api/login");
 //
-//  @Bean
-//  public AuthenticationFailureHandler ajaxAuthenticationFailureHandler() {
-//    return new AjaxAuthenticationFailureHandler();
+//    filter.setAuthenticationManager(authenticationManagerBean());
+//    filter.setAuthenticationSuccessHandler(ajaxAuthSuccessHandler);
+//    filter.setAuthenticationFailureHandler(ajaxAuthFailureHandler);
+//
+//    return filter;
 //  }
 }
