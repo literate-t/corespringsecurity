@@ -1,6 +1,10 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
       xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<meta id="_csrf" name="_csrf" th:content="${_csrf.getToken()}"/>
+<meta id="_csrf_header" name="_csrf_header" th:content="${_csrf.getHeaderName()}"/>
+
 <head th:replace="layout/header::userHead"></head>
 <body>
 <div th:replace="layout/top::header"></div>
@@ -30,11 +34,38 @@
             <span th:text="${session[SPRING_SECURITY_LAST_EXCEPTION]}"
                   class="alert alert-danger">잘못된 아이디나 암호입니다</span>
         </div>-->
-        <button type="submit" class="btn btn-lg btn-primary btn-block">로그인</button>
-        <!--                <button type="submit" onclick="formLogin()" id="formbtn" class="btn btn-lg btn-primary btn-block">로그인</button>-->
+<!--        <button type="submit" class="btn btn-lg btn-primary btn-block">로그인</button>-->
+            <button type="button" onclick="formLogin()" id="formbtn" class="btn btn-lg btn-primary btn-block">로그인</button>
       </form>
     </div>
   </div>
 </div>
+<script>
+  const formLogin = (e) => {
+    const username = document.querySelector("input[name='username']");
+    const password = document.querySelector("input[name='password']");
+    const data = {username, password};
+
+    const csrf = document.querySelector("meta[name='_csrf']").getAttribute("content")
+    const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
+
+    fetch("/api/login", {
+      method: "POST",
+      data: JSON.stringify(data),
+      headers: {
+        [csrfHeader]: csrf,
+        "X-Requested-With": "XMLHttpRequest",
+        "Content-Type": "application/json"
+      }
+    }).then(res => res.json())
+    .then(response => {
+      console.log({response});
+      window.location = "/";
+    }).catch(error => {
+      console.error({error});
+      window.location = `/login?error=true&exception=${error}`
+    });
+  }
+</script>
 </body>
 </html>

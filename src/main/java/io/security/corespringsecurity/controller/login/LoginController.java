@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class LoginController {
 
-  @GetMapping("/login")
+  @GetMapping(value = {"/login", "/api/login"})
   public String login(
       @RequestParam(value = "error", required = false) String error,
       @RequestParam(value = "errorMessage", required = false) String errorMessage,
@@ -38,7 +38,7 @@ public class LoginController {
     return "redirect:/login";
   }
 
-  @GetMapping("/denied")
+  @GetMapping(value={"/denied", "/api/denied"})
   public String accessDenied(
       @RequestParam(value = "exception") String exception,
       Model model
