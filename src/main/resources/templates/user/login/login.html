@@ -42,16 +42,18 @@
 </div>
 <script>
   const formLogin = (e) => {
-    const username = document.querySelector("input[name='username']");
-    const password = document.querySelector("input[name='password']");
+    const username = document.querySelector("input[name='username']").value;
+    const password = document.querySelector("input[name='password']").value;
+
     const data = {username, password};
+    console.log({data});
 
     const csrf = document.querySelector("meta[name='_csrf']").getAttribute("content")
     const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
 
     fetch("/api/login", {
       method: "POST",
-      data: JSON.stringify(data),
+      body: JSON.stringify(data),
       headers: {
         [csrfHeader]: csrf,
         "X-Requested-With": "XMLHttpRequest",
