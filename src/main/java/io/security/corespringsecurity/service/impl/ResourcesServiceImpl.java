@@ -3,6 +3,7 @@ package io.security.corespringsecurity.service.impl;
 import io.security.corespringsecurity.domain.entity.Resources;
 import io.security.corespringsecurity.repository.ResourcesRepository;
 import io.security.corespringsecurity.service.ResourcesService;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
@@ -12,11 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Slf4j
+@RequiredArgsConstructor
 @Service
 public class ResourcesServiceImpl implements ResourcesService {
 
-    @Autowired
-    private ResourcesRepository ResourcesRepository;
+    private final ResourcesRepository ResourcesRepository;
 
     @Transactional
     public Resources getResources(long id) {
