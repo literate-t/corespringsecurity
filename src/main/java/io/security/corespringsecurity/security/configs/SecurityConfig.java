@@ -70,9 +70,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(final HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers("/mypage").hasRole("USER")
-                .antMatchers("/messages").hasRole("MANAGER")
-                .antMatchers("/config").hasRole("ADMIN")
+            // UrlFilterInvocationSecurityMetadataSource를 적용하면서 이 권한 목록들은 적용이 안됨
+//                .antMatchers("/mypage").hasRole("USER")
+//                .antMatchers("/messages").hasRole("MANAGER")
+//                .antMatchers("/config").hasRole("ADMIN")
                 .antMatchers("/**").permitAll()
                 .anyRequest().authenticated()
                 .and()
@@ -89,8 +90,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
                 .accessDeniedPage("/denied")
                 .accessDeniedHandler(accessDeniedHandler())
-//        .and()
-//                .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class)
+        .and()
+                .addFilterBefore(customFilterSecurityInterceptor(), FilterSecurityInterceptor.class)
         ;
 
         http.csrf().disable();
@@ -140,6 +141,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public AccessDeniedHandler accessDeniedHandler() {
         FormAccessDeniedHandler commonAccessDeniedHandler = new FormAccessDeniedHandler();
         commonAccessDeniedHandler.setErrorPage("/denied");
+
         return commonAccessDeniedHandler;
     }
 
@@ -150,15 +152,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         filterSecurityInterceptor.setSecurityMetadataSource(urlFilterInvocationSecurityMetadataSource());
         filterSecurityInterceptor.setAccessDecisionManager(affirmativeBased());
         filterSecurityInterceptor.setAuthenticationManager(authenticationManagerBean());
+
         return filterSecurityInterceptor;
     }
 
     private AccessDecisionManager affirmativeBased() {
-        AffirmativeBased affirmativeBased = new AffirmativeBased(getAccessDecistionVoters());
+        AffirmativeBased affirmativeBased = new AffirmativeBased(getAccessDecisionVoters());
+
         return affirmativeBased;
     }
 
-    private List<AccessDecisionVoter<?>> getAccessDecistionVoters() {
+    private List<AccessDecisionVoter<?>> getAccessDecisionVoters() {
         return Arrays.asList(new RoleVoter());
     }
 
