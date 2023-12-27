@@ -2,6 +2,7 @@ package io.security.corespringsecurity.security.configs;
 
 import io.security.corespringsecurity.repository.UserRepository;
 import io.security.corespringsecurity.security.common.FormWebAuthenticationDetailsSource;
+import io.security.corespringsecurity.security.factory.UrlResourcesMapFactoryBean;
 import io.security.corespringsecurity.security.handler.AjaxAuthenticationFailureHandler;
 import io.security.corespringsecurity.security.handler.AjaxAuthenticationSuccessHandler;
 import io.security.corespringsecurity.security.handler.FormAccessDeniedHandler;
@@ -9,6 +10,7 @@ import io.security.corespringsecurity.security.metadatasource.UrlFilterInvocatio
 import io.security.corespringsecurity.security.provider.AjaxAuthenticationProvider;
 import io.security.corespringsecurity.security.provider.FormAuthenticationProvider;
 import io.security.corespringsecurity.security.service.UserDetailsServiceImpl;
+import io.security.corespringsecurity.service.SecurityResourceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final AuthenticationSuccessHandler formAuthenticationSuccessHandler;
     private final AuthenticationFailureHandler formAuthenticationFailureHandler;
     private final UserRepository userRepository;
+    private final SecurityResourceService securityResourceService;
 
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -167,9 +170,14 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource() {
-        return new UrlFilterInvocationSecurityMetadatsSource();
+    public FilterInvocationSecurityMetadataSource urlFilterInvocationSecurityMetadataSource()
+        throws Exception {
+        return new UrlFilterInvocationSecurityMetadatsSource(urlResourcesMapFactoryBean().getObject());
     }
 
-
+    @Bean
+    public UrlResourcesMapFactoryBean urlResourcesMapFactoryBean() throws Exception {
+        return new UrlResourcesMapFactoryBean(
+            securityResourceService);
+    }
 }

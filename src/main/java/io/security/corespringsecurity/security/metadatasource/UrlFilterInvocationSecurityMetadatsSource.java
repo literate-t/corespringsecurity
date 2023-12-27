@@ -14,12 +14,15 @@ public class UrlFilterInvocationSecurityMetadatsSource implements FilterInvocati
 
     private LinkedHashMap<RequestMatcher, List<ConfigAttribute>> requestMap = new LinkedHashMap<>();
 
+    public UrlFilterInvocationSecurityMetadatsSource(
+        LinkedHashMap<RequestMatcher, List<ConfigAttribute>> resourceMap) {
+        this.requestMap = resourceMap;
+    }
+
     @Override
     public Collection<ConfigAttribute> getAttributes(Object object) throws IllegalArgumentException {
 
         HttpServletRequest request = ((FilterInvocation) object).getRequest();
-
-        requestMap.put(new AntPathRequestMatcher("/mypage"), Arrays.asList(new SecurityConfig("ROLE_USER")));
 
         if(requestMap != null){
             for(Map.Entry<RequestMatcher, List<ConfigAttribute>> entry : requestMap.entrySet()){
