@@ -36,7 +36,7 @@
     const message = (e) => {
         const csrf = document.querySelector("meta[name='_csrf']").getAttribute("content")
         const csrfHeader = document.querySelector("meta[name='_csrf_header']").getAttribute("content");
-        let url = "/messages";
+
         fetch("/api/messages", {
             method: "POST",
             headers: {
@@ -47,13 +47,18 @@
         }).then(res => res.json())
         .then(response => {
             const { status, message }  = response;
+            // console.log(response);
             if (status === 401) {
-                url = `/api/login?error=true&exception=${message}&errorMessage=Need Authorize`;
-            } else if (status === 403) {
-                url = `/api/denied?exception=exception=${message}`;
-            }
+                const errorURL = `/api/login?error=true&exception=${message}&errorMessage=Need Authorize`;
+                window.location = errorURL;
+                // console.log(errorURL);
 
-            window.location = url;
+            } else if (status === 403) {
+                const errorURL = `/api/denied?exception=exception=${message}`;
+                window.location = errorURL;
+                // console.log(errorURL)
+            }
+            // window.location = "/";
         }).catch(error => {
             console.error({error});
         });
