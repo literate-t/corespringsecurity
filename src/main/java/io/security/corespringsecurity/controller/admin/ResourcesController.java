@@ -5,10 +5,13 @@ import io.security.corespringsecurity.domain.dto.ResourcesDto;
 import io.security.corespringsecurity.domain.entity.Resources;
 import io.security.corespringsecurity.domain.entity.Role;
 import io.security.corespringsecurity.repository.RoleRepository;
+import io.security.corespringsecurity.security.metadatasource.UrlFilterInvocationSecurityMetadatsSource;
 import io.security.corespringsecurity.service.ResourcesService;
 import io.security.corespringsecurity.service.RoleService;
+import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,17 +22,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@RequiredArgsConstructor
 @Controller
 public class ResourcesController {
-	
-	@Autowired
-	private ResourcesService resourcesService;
 
-	@Autowired
-	private RoleRepository roleRepository;
-
-	@Autowired
-	private RoleService roleService;
+	private final ResourcesService resourcesService;
+	private final RoleRepository roleRepository;
+	private final RoleService roleService;
+	private final UrlFilterInvocationSecurityMetadatsSource urlFilterInvocationSecurityMetadatsSource;
 
 	@GetMapping(value="/admin/resources")
 	public String getResources(Model model) throws Exception {
@@ -51,6 +51,7 @@ public class ResourcesController {
 		resources.setRoleSet(roles);
 
 		resourcesService.createResources(resources);
+		urlFilterInvocationSecurityMetadatsSource.reload();;
 
 		return "redirect:/admin/resources";
 	}
@@ -89,6 +90,7 @@ public class ResourcesController {
 
 		Resources resources = resourcesService.getResources(Long.valueOf(id));
 		resourcesService.deleteResources(Long.valueOf(id));
+		urlFilterInvocationSecurityMetadatsSource.reload();
 
 		return "redirect:/admin/resources";
 	}
